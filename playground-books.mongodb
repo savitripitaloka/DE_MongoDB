@@ -1,0 +1,43 @@
+/* global use, db */
+// MongoDB Playground
+// To disable this template go to Settings | MongoDB | Use Default Template For Playground.
+// Make sure you are connected to enable completions and to be able to run a playground.
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+// The result of the last command run in a playground is shown on the results panel.
+// By default the first 20 documents will be returned with a cursor.
+// Use 'console.log()' to print to the debug output.
+// For more documentation on playgrounds please refer to
+// https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
+
+
+// Select the database to use.
+use('dbskola');
+
+// 1. Find all books authored by "Author 5" that have been borrowed by any user but not yet returned.
+db.getCollection('books').find({
+    author: "Author 5",
+    borrowed: { $exists: true },
+    returned: false
+});
+
+// 2. List all books published before the year 1980 and have more than 5 copies available.
+db.getCollection('books').find({
+    publication_year: { $lt: 1980 },
+    copies_available: { $gt: 5 }
+});
+
+// 3. Find the top 5 most recently published books in the "Fantasy" genre
+db.getCollection('books').find({
+    genre: "Fantasy"
+}).sort({ publication_year: -1 }).limit(5);
+
+// 4. Count the number of books available for each genre.
+db.getCollection('books').aggregate([
+    { $group: { _id: "$genre", count: { $sum: 1 } } }
+]);
+
+// 5. Find all books that have never been borrowed by any user.
+db.getCollection('books').find({
+    borrowed: { $exists: false }
+});
+
